@@ -1,11 +1,26 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+interface Answer {
+  id: number;
+  questionId: number;
+  answerLabel: string;
+  isCorrect: boolean;
+}
+
+interface QuestionWithAnswers {
+  id: number;
+  question: string;
+  answers: Answer[];
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class QuizService {
-  quizContent: any[] = [];
+  quizContent: QuestionWithAnswers[] = [];
   playerAnswers: { questionId: number; answer: string }[] = [];
   score = 0;
   isQuizFinished = false;
@@ -46,18 +61,30 @@ export class QuizService {
   }
 
   getQuizContent(categoryId: string) {
+    this.quizContent = []; // Reset the question list
+
     this.http
-      .get(`http://localhost:3000/questions?categoryId=${categoryId}`)
-      .subscribe((questions: any) => {
+      .get<QuestionWithAnswers[]>(
+        `http://localhost:3000/questions?categoryId=${categoryId}`
+      )
+      .subscribe((questions) => {
+        const questionsWithAnswers: QuestionWithAnswers[] = [];
+
         for (const question of questions) {
           this.http
-            .get(`http://localhost:3000/answers?questionId=${question.id}`)
-            .subscribe((answers: any) => {
-              this.quizContent.push({
+            .get<Answer[]>(
+              `http://localhost:3000/answers?questionId=${question.id}`
+            )
+            .subscribe((answers) => {
+              questionsWithAnswers.push({
                 id: question.id,
-                question: question.questionLabel,
+                question: question.question,
                 answers,
               });
+
+              if (questionsWithAnswers.length === questions.length) {
+                this.quizContent = questionsWithAnswers;
+              }
             });
         }
       });
