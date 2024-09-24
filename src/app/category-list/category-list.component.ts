@@ -19,7 +19,7 @@ export class CategoryListComponent implements OnInit {
 
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe((categories: any[]) => {
-      console.log('Fetched categories:', categories); // Add this line
+      console.log('Fetched categories:', categories);
       this.categories = categories;
       this.filteredCategories = categories;
     });
