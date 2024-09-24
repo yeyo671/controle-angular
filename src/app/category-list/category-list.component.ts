@@ -19,6 +19,7 @@ export class CategoryListComponent implements OnInit {
 
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe((categories: any[]) => {
+      console.log('Fetched categories:', categories); // Add this line
       this.categories = categories;
       this.filteredCategories = categories;
     });
@@ -26,7 +27,9 @@ export class CategoryListComponent implements OnInit {
 
   filterCategories() {
     this.filteredCategories = this.categories.filter((category) =>
-      category.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      category.categoryName
+        .toLowerCase()
+        .includes(this.searchQuery.toLowerCase())
     );
   }
 
