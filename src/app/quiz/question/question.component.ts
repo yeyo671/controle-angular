@@ -2,13 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { QuizService } from '../../shared/services/quiz.service';
 import { ActivatedRoute } from '@angular/router';
 
+interface Answer {
+  id: number;
+  questionId: number;
+  answerLabel: string;
+  isCorrect: boolean;
+}
+
+interface QuestionWithAnswers {
+  id: number;
+  question: string;
+  answers: Answer[];
+}
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
   styleUrls: ['./question.component.scss'],
 })
 export class QuestionComponent implements OnInit {
-  quizContent: any[] = [];
+  quizContent: QuestionWithAnswers[] = [];
 
   constructor(
     private quizService: QuizService,
@@ -18,8 +30,6 @@ export class QuestionComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const categoryId = params['categoryId'];
-
-      // Subscribe to the observable returned by getQuizContent()
       this.quizService.getQuizContent(categoryId).subscribe((questions) => {
         this.quizContent = questions;
       });

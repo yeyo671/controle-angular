@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
-import { map, mergeAll } from 'rxjs/operators';
+import { map, mergeAll, switchMap } from 'rxjs/operators';
 
 interface Answer {
   id: number;
@@ -61,34 +61,30 @@ export class QuizService {
   }
 
   getQuizContent(categoryId: string): Observable<QuestionWithAnswers[]> {
-    // Fetch the questions filtered by categoryId
     return this.http
       .get<QuestionWithAnswers[]>(
         `http://localhost:3000/questions?categoryId=${categoryId}`
       )
       .pipe(
-        // Map over the questions array
-        map((questions) => {
-          const questionObservables = questions.map((question) => {
-            // For each question, fetch its answers
-            return this.http
+        switchMap((questions) => {
+          const questionsWithAnswers$ = questions.map((question) =>
+            this.http
               .get<Answer[]>(
                 `http://localhost:3000/answers?questionId=${question.id}`
               )
               .pipe(
                 map((answers) => ({
-                  id: question.id,
-                  question: question.question,
-                  answers: answers,
+                  ...question,
+                  answers,
                 }))
-              );
-          });
-
-          // Wait for all requests to complete and return the full array of questions with answers
-          return forkJoin(questionObservables);
+              )
+          );
+          return forkJoin(questionsWithAnswers$);
         }),
-        // Use `mergeAll` to flatten the observable of observables into a single observable
-        mergeAll()
+        map((questionsWithAnswers) => {
+          this.quizContent = questionsWithAnswers;
+          return questionsWithAnswers;
+        })
       );
   }
 

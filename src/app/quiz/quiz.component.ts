@@ -21,8 +21,9 @@ export class QuizComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.categoryId = params['categoryId'];
-      this.quizService.getQuizContent(this.categoryId);
-      this.router.navigate(['question'], { relativeTo: this.route });
+      this.quizService.getQuizContent(this.categoryId).subscribe(() => {
+        this.router.navigate(['question'], { relativeTo: this.route });
+      });
     });
   }
 
