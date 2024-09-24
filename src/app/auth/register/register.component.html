@@ -40,6 +40,25 @@
           >Password cannot be more than 8 characters</small
         >
       </div>
+      <input
+        type="password"
+        placeholder="Confirm Password"
+        class="input"
+        formControlName="confirmPassword"
+      />
+      <div
+        *ngIf="
+          registerForm.get('confirmPassword')?.invalid &&
+          registerForm.get('confirmPassword')?.touched
+        "
+      >
+        <small *ngIf="registerForm.get('confirmPassword')?.errors?.['required']"
+          >Confirm Password is required</small
+        >
+        <small *ngIf="registerForm.errors?.['mismatch']"
+          >Passwords do not match</small
+        >
+      </div>
     </div>
     <button class="btn" [disabled]="registerForm.invalid">S'inscrire</button>
   </form>
