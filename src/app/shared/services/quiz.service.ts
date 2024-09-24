@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
+import { map, mergeAll } from 'rxjs/operators';
 
 interface Answer {
   id: number;
@@ -60,34 +60,36 @@ export class QuizService {
     this.playerAnswers.push({ questionId, answer });
   }
 
-  getQuizContent(categoryId: string) {
-    this.quizContent = [];
-
-    this.http
+  getQuizContent(categoryId: string): Observable<QuestionWithAnswers[]> {
+    // Fetch the questions filtered by categoryId
+    return this.http
       .get<QuestionWithAnswers[]>(
         `http://localhost:3000/questions?categoryId=${categoryId}`
       )
-      .subscribe((questions) => {
-        const questionsWithAnswers: QuestionWithAnswers[] = [];
+      .pipe(
+        // Map over the questions array
+        map((questions) => {
+          const questionObservables = questions.map((question) => {
+            // For each question, fetch its answers
+            return this.http
+              .get<Answer[]>(
+                `http://localhost:3000/answers?questionId=${question.id}`
+              )
+              .pipe(
+                map((answers) => ({
+                  id: question.id,
+                  question: question.question,
+                  answers: answers,
+                }))
+              );
+          });
 
-        for (const question of questions) {
-          this.http
-            .get<Answer[]>(
-              `http://localhost:3000/answers?questionId=${question.id}`
-            )
-            .subscribe((answers) => {
-              questionsWithAnswers.push({
-                id: question.id,
-                question: question.question,
-                answers,
-              });
-
-              if (questionsWithAnswers.length === questions.length) {
-                this.quizContent = questionsWithAnswers;
-              }
-            });
-        }
-      });
+          // Wait for all requests to complete and return the full array of questions with answers
+          return forkJoin(questionObservables);
+        }),
+        // Use `mergeAll` to flatten the observable of observables into a single observable
+        mergeAll()
+      );
   }
 
   resetQuiz() {

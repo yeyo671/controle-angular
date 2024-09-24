@@ -6,7 +6,7 @@
     <b>Question {{ i + 1 }} :</b> {{ content?.question }}
   </h4>
   <app-answer
-    [answers]="content?.answers || []"
-    [questionId]="content?.id!"
+    [answers]="content?.answers"
+    [questionId]="content?.id"
   ></app-answer>
 </section>
