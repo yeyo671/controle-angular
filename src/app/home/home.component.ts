@@ -9,7 +9,6 @@ import { AuthService } from '../auth/auth.service';
 })
 export class HomeComponent implements OnInit {
   playerName = '';
-  goToCategory = false;
 
   constructor(private router: Router, private authService: AuthService) {}
 
