@@ -2,10 +2,51 @@
   <form class="login_form" [formGroup]="loginForm" (ngSubmit)="login()">
     <h2>Connexion</h2>
     <div class="login_form-container">
-      <input type="text" placeholder="Username" class="input" formControlName="username" />
-      <input type="password" placeholder="Password" class="input" formControlName="password" />
+      <input
+        type="text"
+        placeholder="Username"
+        class="input"
+        formControlName="username"
+      />
+      <div
+        *ngIf="
+          loginForm.get('username')?.invalid &&
+          loginForm.get('username')?.touched
+        "
+      >
+        <small *ngIf="loginForm.get('username')?.errors?.['required']"
+          >Username is required</small
+        >
+      </div>
+      <input
+        type="password"
+        placeholder="Password"
+        class="input"
+        formControlName="password"
+      />
+      <div
+        *ngIf="
+          loginForm.get('password')?.invalid &&
+          loginForm.get('password')?.touched
+        "
+      >
+        <small *ngIf="loginForm.get('password')?.errors?.['required']"
+          >Password is required</small
+        >
+        <small *ngIf="loginForm.get('password')?.errors?.['minlength']"
+          >Password must be at least 4 characters</small
+        >
+        <small *ngIf="loginForm.get('password')?.errors?.['maxlength']"
+          >Password cannot be more than 8 characters</small
+        >
+      </div>
     </div>
-    <button class="btn">Se connecter</button>
+    <button class="btn" [disabled]="loginForm.invalid">Se connecter</button>
   </form>
-  <p class="message">Pas encore parmi nous ? <a routerLink="/register" class="login_register-link">Créer toi un compte !</a></p>
+  <p class="message">
+    Pas encore parmi nous ?
+    <a routerLink="/register" class="login_register-link"
+      >Créer toi un compte !</a
+    >
+  </p>
 </section>
