@@ -1,0 +1,18 @@
+<section class="category-list">
+  <input
+    type="text"
+    placeholder="Rechercher une catégorie"
+    [(ngModel)]="searchQuery"
+    (input)="filterCategories()"
+  />
+  <button (click)="resetFilter()">Réinitialiser le filtre</button>
+  <div class="category-cards">
+    <div
+      class="category-card"
+      *ngFor="let category of filteredCategories"
+      (click)="navigateToQuiz(category.id)"
+    >
+      <h3>{{ category.name }}</h3>
+    </div>
+  </div>
+</section>
