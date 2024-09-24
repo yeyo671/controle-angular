@@ -1,0 +1,22 @@
+<section class="home">
+  <h2 class="home_title">Bienvenu sur ce quiz</h2>
+  <p class="home_presentation">Ce quiz a pour but éducatif</p>
+  <form action="" class="home_form">
+    <label for="name">Pseudo</label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      placeholder="Entrez un pseudo"
+      [(ngModel)]="playerName"
+      required
+    />
+  </form>
+  <button
+    class="home_quiz-btn btn--outline"
+    (click)="navigateToQuiz()"
+    [disabled]="isPlayerNameFill"
+  >
+    Démarrer
+  </button>
+</section>
