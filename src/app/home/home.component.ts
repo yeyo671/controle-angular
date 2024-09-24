@@ -9,6 +9,7 @@ import { AuthService } from "../auth/auth.service";
 })
 export class HomeComponent implements OnInit {
   playerName = '';
+  goToCategory = false;
 
   constructor(private router: Router, private authService: AuthService) { }
 
@@ -22,7 +23,12 @@ export class HomeComponent implements OnInit {
     return this.playerName.length < 1;
   }
 
-  navigateToQuiz() {
-    this.router.navigate(['/quiz', this.playerName]);
+  // navigateToQuiz() {
+  //   this.router.navigate(['/quiz', this.playerName]);
+  // }
+
+  navigateToCategory() {
+    this.goToCategory = true;
+    this.router.navigate(['/category']);
   }
 }
