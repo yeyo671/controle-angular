@@ -61,7 +61,7 @@ export class QuizService {
   }
 
   getQuizContent(categoryId: string) {
-    this.quizContent = []; // Reset the question list
+    this.quizContent = [];
 
     this.http
       .get<QuestionWithAnswers[]>(
